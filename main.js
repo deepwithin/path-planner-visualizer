@@ -221,7 +221,7 @@ const algoSelect = document.getElementById("algoSelect");
 const algoParamsDiv = document.getElementById("algoParams");
 
 // Populate algorithm select
-algoSelect.innerHTML = '';
+algoSelect.innerHTML = '<option value="">Select Algorithm</option>';
 for (const key in ALGORITHMS) {
   const option = document.createElement('option');
   option.value = key;
@@ -231,6 +231,12 @@ for (const key in ALGORITHMS) {
 
 algoSelect.addEventListener("change", () => {
   const algo = algoSelect.value;
+
+  if (!algo) {
+    algoParamsDiv.innerHTML = '<p>Select an algorithm to see parameters.</p>';
+    return;
+  }
+
   const params = ALGORITHMS[algo].params;
 
   let html = '';
@@ -254,9 +260,6 @@ algoSelect.addEventListener("change", () => {
   }
   algoParamsDiv.innerHTML = html;
 });
-
-// Trigger initial change to set default params
-algoSelect.dispatchEvent(new Event('change'));
 
 import { runAStar } from "./planners/astar.js";
 
