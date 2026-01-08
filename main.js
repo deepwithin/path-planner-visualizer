@@ -32,6 +32,7 @@ function euclidean(a, b) {
 // ===== Drawing =====
 function drawGrid() {
   ctx.strokeStyle = "#ddd";
+  ctx.lineWidth = 1;
 
   for (let i = 0; i <= GRID_SIZE; i++) {
     let p = i * CELL_SIZE;
@@ -103,7 +104,6 @@ function clearObstacles() {
       grid[r][c] = 0;
     }
   }
-  currentPath = null;
   redraw();
 }
 
