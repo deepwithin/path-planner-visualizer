@@ -364,7 +364,7 @@ document.getElementById("runBtn").addEventListener("click", () => {
 function animateSearch(visited, frontier, openSets, path) {
   visitedNodes = visited;
   frontierNodes = [];
-  currentPath = path; // null if no path
+  currentPath = null; // Don't draw path yet
   visitedDrawn = 0;
   frontierDrawn = 0;
 
@@ -378,7 +378,9 @@ function animateSearch(visited, frontier, openSets, path) {
       step++;
       setTimeout(animate, 20); // 20ms delay for animation
     } else {
-      // Animation complete, path is already drawn if exists
+      // Animation complete, now draw the path
+      currentPath = path;
+      redraw();
     }
   };
 
