@@ -139,3 +139,65 @@ canvas.addEventListener("mouseleave", () => {
 redraw();
 
 
+const algoSelect = document.getElementById("algoSelect");
+const algoParamsDiv = document.getElementById("algoParams");
+
+algoSelect.addEventListener("change", () => {
+  const algo = algoSelect.value;
+
+  if (algo === "astar") {
+    algoParamsDiv.innerHTML = `
+      <label>
+        Heuristic:
+        <select>
+          <option>Manhattan</option>
+          <option>Euclidean</option>
+        </select>
+      </label>
+    `;
+  }
+
+  if (algo === "rrt") {
+    algoParamsDiv.innerHTML = `
+      <label>Step Size <input type="number" value="10"></label>
+      <label>Max Iterations <input type="number" value="1000"></label>
+    `;
+  }
+
+  if (algo === "rrtstar") {
+    algoParamsDiv.innerHTML = `
+      <label>Step Size <input type="number" value="10"></label>
+      <label>Rewire Radius <input type="number" value="30"></label>
+    `;
+  }
+});
+
+import { runAStar } from "./planners/astar.js";
+
+document.getElementById("runBtn").addEventListener("click", () => {
+//   clearPath();
+
+  const algo = algoSelect.value;
+
+  let result;
+
+  if (algo === "astar") {
+    result = runAStar(grid, start, goal, heuristic);
+    console.log("A* result:", result);
+  }
+
+  if (!result) {
+    alert("No path found");
+    return;
+  }
+
+  drawPath(result.path);
+  updateStats(result.stats);
+});
+
+function updateStats(stats) {
+  document.getElementById("pathLength").textContent = stats.pathLength;
+  document.getElementById("nodesVisited").textContent = stats.nodesVisited;
+  document.getElementById("timeTaken").textContent = stats.timeMs;
+}
+
