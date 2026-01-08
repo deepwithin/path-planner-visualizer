@@ -23,6 +23,7 @@ export function runAStar(grid, start, goal, heuristicFn) {
   openSet.push(start);
 
   let visited = [];
+  let openSets = [];
   let nodesVisited = 0;
 
   while (openSet.length > 0) {
@@ -38,6 +39,7 @@ export function runAStar(grid, start, goal, heuristicFn) {
 
     const current = openSet.splice(currentIdx, 1)[0];
     visited.push(current);
+    openSets.push(openSet.slice());
     nodesVisited++;
 
     // Goal reached
@@ -48,6 +50,8 @@ export function runAStar(grid, start, goal, heuristicFn) {
       return {
         path,
         visited,
+        frontier: openSet.slice(),
+        openSets,
         stats: {
           nodesVisited,
           pathLength: path.length,

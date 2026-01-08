@@ -22,6 +22,12 @@ let isDraggingGoal = false;
 // ===== Path state =====
 let currentPath = null;
 
+// ===== Visualization state =====
+let visitedNodes = [];
+let frontierNodes = [];
+let visitedDrawn = 0;
+let frontierDrawn = 0;
+
 // ===== Heuristic functions =====
 function manhattan(a, b) {
   return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
@@ -92,10 +98,28 @@ function drawPath(path) {
   ctx.stroke();
 }
 
+function drawVisited() {
+  ctx.fillStyle = 'rgba(0, 100, 255, 0.3)'; // light blue
+  for (let i = 0; i < visitedDrawn; i++) {
+    const node = visitedNodes[i];
+    ctx.fillRect(node.c * CELL_SIZE, node.r * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  }
+}
+
+function drawFrontier() {
+  ctx.fillStyle = 'rgba(255, 165, 0, 0.3)'; // orange
+  for (let i = 0; i < frontierDrawn; i++) {
+    const node = frontierNodes[i];
+    ctx.fillRect(node.c * CELL_SIZE, node.r * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  }
+}
+
 function redraw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
   drawObstacles();
+  drawVisited();
+  drawFrontier();
   drawStartGoal();
   if (currentPath) {
     drawPath(currentPath);
@@ -108,6 +132,11 @@ function clearObstacles() {
       grid[r][c] = 0;
     }
   }
+  visitedNodes = [];
+  frontierNodes = [];
+  visitedDrawn = 0;
+  frontierDrawn = 0;
+  currentPath = null;
   redraw();
 }
 
@@ -116,6 +145,10 @@ document.getElementById("clearBtn")
 
 document.getElementById("clearPathBtn")
   .addEventListener("click", () => {
+    visitedNodes = [];
+    frontierNodes = [];
+    visitedDrawn = 0;
+    frontierDrawn = 0;
     currentPath = null;
     redraw();
   });
@@ -178,6 +211,10 @@ canvas.addEventListener("mousemove", (e) => {
       } else if (isDraggingGoal) {
         goal = { r: cell.r, c: cell.c };
       }
+      visitedNodes = [];
+      frontierNodes = [];
+      visitedDrawn = 0;
+      frontierDrawn = 0;
       currentPath = null; // Clear path when positions change
       redraw();
     }
@@ -325,10 +362,33 @@ document.getElementById("runBtn").addEventListener("click", () => {
     return;
   }
 
-  currentPath = result.path;
-  redraw();
+  animateSearch(result.visited, result.frontier, result.openSets, result.path);
   updateStats(result.stats);
 });
+
+function animateSearch(visited, frontier, openSets, path) {
+  visitedNodes = visited;
+  frontierNodes = [];
+  currentPath = path;
+  visitedDrawn = 0;
+  frontierDrawn = 0;
+
+  let step = 0;
+  const animate = () => {
+    if (step < visited.length) {
+      visitedDrawn = step + 1;
+      frontierNodes = openSets[step];
+      frontierDrawn = frontierNodes.length;
+      redraw();
+      step++;
+      setTimeout(animate, 20); // 20ms delay for animation
+    } else {
+      // Animation complete, path is already drawn
+    }
+  };
+
+  animate();
+}
 
 function updateStats(stats) {
   document.getElementById("pathLength").textContent = stats.pathLength;
