@@ -15,6 +15,20 @@ let grid = Array(GRID_SIZE)
 let isMouseDown = false;
 let lastCell = null;
 
+// ===== Path state =====
+let currentPath = null;
+
+// ===== Heuristic functions =====
+function manhattan(a, b) {
+  return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
+}
+
+function euclidean(a, b) {
+  const dr = a.r - b.r;
+  const dc = a.c - b.c;
+  return Math.sqrt(dr * dr + dc * dc);
+}
+
 // ===== Drawing =====
 function drawGrid() {
   ctx.strokeStyle = "#ddd";
@@ -61,11 +75,26 @@ function drawStartGoal() {
   ctx.fillRect(goal.c * CELL_SIZE, goal.r * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 }
 
+function drawPath(path) {
+  if (path.length < 2) return;
+  ctx.strokeStyle = "blue";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(path[0].c * CELL_SIZE + CELL_SIZE / 2, path[0].r * CELL_SIZE + CELL_SIZE / 2);
+  for (let i = 1; i < path.length; i++) {
+    ctx.lineTo(path[i].c * CELL_SIZE + CELL_SIZE / 2, path[i].r * CELL_SIZE + CELL_SIZE / 2);
+  }
+  ctx.stroke();
+}
+
 function redraw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
   drawObstacles();
   drawStartGoal();
+  if (currentPath) {
+    drawPath(currentPath);
+  }
 }
 
 function clearObstacles() {
@@ -74,11 +103,18 @@ function clearObstacles() {
       grid[r][c] = 0;
     }
   }
+  currentPath = null;
   redraw();
 }
 
 document.getElementById("clearBtn")
   .addEventListener("click", clearObstacles);
+
+document.getElementById("clearPathBtn")
+  .addEventListener("click", () => {
+    currentPath = null;
+    redraw();
+  });
 
 // ===== Mouse → Grid helper =====
 function getCellFromMouse(e) {
@@ -149,7 +185,7 @@ algoSelect.addEventListener("change", () => {
     algoParamsDiv.innerHTML = `
       <label>
         Heuristic:
-        <select>
+        <select id="heuristicSelect">
           <option>Manhattan</option>
           <option>Euclidean</option>
         </select>
@@ -179,10 +215,23 @@ document.getElementById("runBtn").addEventListener("click", () => {
 
   const algo = algoSelect.value;
 
+  console.log("Running algorithm:", algo);
+
   let result;
 
   if (algo === "astar") {
-    result = runAStar(grid, start, goal, heuristic);
+    const heuristicSelect = document.getElementById("heuristicSelect");
+    const heuristicType = heuristicSelect.value;
+    console.log("Selected heuristic:", heuristicType);
+
+    let heuristicFn;
+    if (heuristicType === "Manhattan") {
+      heuristicFn = manhattan;
+    } else {
+      heuristicFn = euclidean;
+    }
+
+    result = runAStar(grid, start, goal, heuristicFn);
     console.log("A* result:", result);
   }
 
@@ -191,7 +240,8 @@ document.getElementById("runBtn").addEventListener("click", () => {
     return;
   }
 
-  drawPath(result.path);
+  currentPath = result.path;
+  redraw();
   updateStats(result.stats);
 });
 
