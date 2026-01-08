@@ -293,9 +293,12 @@ algoSelect.addEventListener("change", () => {
 import { runAStar } from "./planners/astar.js";
 
 document.getElementById("runBtn").addEventListener("click", () => {
-//   clearPath();
-
   const algo = algoSelect.value;
+
+  if (!algo) {
+    alert("Please select an algorithm first.");
+    return;
+  }
 
   console.log("Running algorithm:", algo);
 
