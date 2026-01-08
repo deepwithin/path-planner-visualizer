@@ -174,39 +174,89 @@ canvas.addEventListener("mouseleave", () => {
 // ===== Initial draw =====
 redraw();
 
+const ALGORITHMS = {
+  astar: {
+    name: "A*",
+    params: {
+      heuristic: {
+        type: "select",
+        options: ["Manhattan", "Euclidean"],
+        default: "Manhattan"
+      }
+    }
+  },
+  rrt: {
+    name: "RRT",
+    params: {
+      stepSize: {
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 50
+      },
+      maxIterations: {
+        type: "number",
+        default: 1000
+      }
+    }
+  },
+  rrtstar: {
+    name: "RRT*",
+    params: {
+      stepSize: {
+        type: "number",
+        default: 10,
+        min: 1,
+        max: 50
+      },
+      rewireRadius: {
+        type: "number",
+        default: 30
+      }
+    }
+  }
+};
 
 const algoSelect = document.getElementById("algoSelect");
 const algoParamsDiv = document.getElementById("algoParams");
 
+// Populate algorithm select
+algoSelect.innerHTML = '';
+for (const key in ALGORITHMS) {
+  const option = document.createElement('option');
+  option.value = key;
+  option.textContent = ALGORITHMS[key].name;
+  algoSelect.appendChild(option);
+}
+
 algoSelect.addEventListener("change", () => {
   const algo = algoSelect.value;
+  const params = ALGORITHMS[algo].params;
 
-  if (algo === "astar") {
-    algoParamsDiv.innerHTML = `
-      <label>
-        Heuristic:
-        <select id="heuristicSelect">
-          <option>Manhattan</option>
-          <option>Euclidean</option>
-        </select>
-      </label>
-    `;
+  let html = '';
+  for (const paramKey in params) {
+    const param = params[paramKey];
+    html += '<label>' + paramKey + ': ';
+    if (param.type === 'select') {
+      html += '<select id="' + paramKey + 'Select">';
+      for (const opt of param.options) {
+        const selected = opt === param.default ? ' selected' : '';
+        html += '<option' + selected + '>' + opt + '</option>';
+      }
+      html += '</select>';
+    } else if (param.type === 'number') {
+      html += '<input type="number" id="' + paramKey + 'Input" value="' + param.default + '"';
+      if (param.min) html += ' min="' + param.min + '"';
+      if (param.max) html += ' max="' + param.max + '"';
+      html += '>';
+    }
+    html += '</label><br>';
   }
-
-  if (algo === "rrt") {
-    algoParamsDiv.innerHTML = `
-      <label>Step Size <input type="number" value="10"></label>
-      <label>Max Iterations <input type="number" value="1000"></label>
-    `;
-  }
-
-  if (algo === "rrtstar") {
-    algoParamsDiv.innerHTML = `
-      <label>Step Size <input type="number" value="10"></label>
-      <label>Rewire Radius <input type="number" value="30"></label>
-    `;
-  }
+  algoParamsDiv.innerHTML = html;
 });
+
+// Trigger initial change to set default params
+algoSelect.dispatchEvent(new Event('change'));
 
 import { runAStar } from "./planners/astar.js";
 
