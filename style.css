@@ -3,14 +3,9 @@ body {
   font-family: sans-serif;
 }
 
-h2 {
-  text-align: center;
-  margin: 10px 0;
-}
-
 .container {
   display: flex;
-  height: calc(100vh - 50px);
+  height: 100vh;
 }
 
 /* LEFT PANE */
@@ -19,6 +14,12 @@ h2 {
   padding: 15px;
   border-right: 1px solid #ccc;
   background-color: #f9f9f9;
+}
+
+.left-pane h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
 }
 
 .left-pane h3 {
@@ -63,9 +64,23 @@ h2 {
 .stats {
   margin-bottom: 10px;
   font-size: 14px;
+  display: flex;
+  justify-content: space-around;
 }
 
 /* Canvas */
 canvas {
   border: 1px solid black;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .left-pane {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+  }
 }
