@@ -362,6 +362,10 @@ document.getElementById("runBtn").addEventListener("click", () => {
     return;
   }
 
+  if (!result.path) {
+    alert("No path found");
+  }
+
   animateSearch(result.visited, result.frontier, result.openSets, result.path);
   updateStats(result.stats);
 });
@@ -369,7 +373,7 @@ document.getElementById("runBtn").addEventListener("click", () => {
 function animateSearch(visited, frontier, openSets, path) {
   visitedNodes = visited;
   frontierNodes = [];
-  currentPath = path;
+  currentPath = path; // null if no path
   visitedDrawn = 0;
   frontierDrawn = 0;
 
@@ -383,7 +387,7 @@ function animateSearch(visited, frontier, openSets, path) {
       step++;
       setTimeout(animate, 20); // 20ms delay for animation
     } else {
-      // Animation complete, path is already drawn
+      // Animation complete, path is already drawn if exists
     }
   };
 

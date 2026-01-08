@@ -77,7 +77,19 @@ export function runAStar(grid, start, goal, heuristicFn) {
     }
   }
 
-  return null; // no path
+  // No path found
+  const t1 = performance.now();
+  return {
+    path: null,
+    visited,
+    frontier: openSet.slice(),
+    openSets,
+    stats: {
+      nodesVisited,
+      pathLength: 0,
+      timeMs: (t1 - t0).toFixed(2)
+    }
+  };
 }
 
 // ===== Helpers =====
