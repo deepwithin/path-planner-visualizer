@@ -323,6 +323,7 @@ algoSelect.addEventListener("change", () => {
 });
 
 import { runAStar } from "./planners/astar.js";
+import { runRRT } from "./planners/rrt.js";
 
 document.getElementById("runBtn").addEventListener("click", () => {
   const algo = algoSelect.value;
@@ -350,6 +351,15 @@ document.getElementById("runBtn").addEventListener("click", () => {
 
     result = runAStar(grid, start, goal, heuristicFn);
     console.log("A* result:", result);
+  }
+
+  if (algo === "rrt") {
+    const stepSize = parseInt(document.getElementById("stepSizeInput").value);
+    const maxIterations = parseInt(document.getElementById("maxIterationsInput").value);
+    console.log("RRT params:", { stepSize, maxIterations });
+
+    result = runRRT(grid, start, goal, { stepSize, maxIterations });
+    console.log("RRT result:", result);
   }
 
   if (!result) {
