@@ -86,7 +86,7 @@ export function runAStar(grid, start, goal, heuristicFn) {
     openSets,
     stats: {
       nodesVisited,
-      pathLength: 0,
+      pathLength: "No path found",
       timeMs: (t1 - t0).toFixed(2)
     }
   };

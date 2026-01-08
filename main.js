@@ -132,11 +132,6 @@ function clearObstacles() {
       grid[r][c] = 0;
     }
   }
-  visitedNodes = [];
-  frontierNodes = [];
-  visitedDrawn = 0;
-  frontierDrawn = 0;
-  currentPath = null;
   redraw();
 }
 
@@ -360,10 +355,6 @@ document.getElementById("runBtn").addEventListener("click", () => {
   if (!result) {
     alert("No path found");
     return;
-  }
-
-  if (!result.path) {
-    alert("No path found");
   }
 
   animateSearch(result.visited, result.frontier, result.openSets, result.path);
