@@ -246,6 +246,10 @@ const ALGORITHMS = {
       }
     }
   },
+  dijkstra: {
+    name: "Dijkstra",
+    params: {}
+  },
   rrt: {
     name: "RRT",
     params: {
@@ -323,6 +327,7 @@ algoSelect.addEventListener("change", () => {
 });
 
 import { runAStar } from "./planners/astar.js";
+import { runDijkstra } from "./planners/dijkstra.js";
 import { runRRT } from "./planners/rrt.js";
 
 document.getElementById("runBtn").addEventListener("click", () => {
@@ -353,6 +358,11 @@ document.getElementById("runBtn").addEventListener("click", () => {
     console.log("A* result:", result);
   }
 
+  if (algo === "dijkstra") {
+    result = runDijkstra(grid, start, goal);
+    console.log("Dijkstra result:", result);
+  }
+
   if (algo === "rrt") {
     const stepSize = parseInt(document.getElementById("stepSizeInput").value);
     const maxIterations = parseInt(document.getElementById("maxIterationsInput").value);
@@ -373,17 +383,27 @@ document.getElementById("runBtn").addEventListener("click", () => {
 
 function animateSearch(visited, frontier, openSets, path) {
   visitedNodes = visited;
-  frontierNodes = [];
   currentPath = null; // Don't draw path yet
   visitedDrawn = 0;
   frontierDrawn = 0;
 
   let step = 0;
+  const isDynamic = openSets.length > 0;
+
+  if (isDynamic) {
+    frontierNodes = [];
+  } else {
+    frontierNodes = frontier;
+    frontierDrawn = frontier.length;
+  }
+
   const animate = () => {
     if (step < visited.length) {
       visitedDrawn = step + 1;
-      frontierNodes = openSets[step];
-      frontierDrawn = frontierNodes.length;
+      if (isDynamic) {
+        frontierNodes = openSets[step] || [];
+        frontierDrawn = frontierNodes.length;
+      }
       redraw();
       step++;
       setTimeout(animate, 20); // 20ms delay for animation
