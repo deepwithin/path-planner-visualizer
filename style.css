@@ -10,10 +10,15 @@ body {
 
 /* LEFT PANE */
 .left-pane {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 250px;
+  height: 100vh;
   padding: 15px;
   border-right: 1px solid #ccc;
   background-color: #f9f9f9;
+  overflow-y: auto;
 }
 
 .left-pane h2 {
@@ -38,6 +43,7 @@ body {
 
 /* RIGHT PANE */
 .right-pane {
+  margin-left: 250px;
   flex: 1;
   padding: 15px;
   display: flex;
@@ -79,8 +85,13 @@ canvas {
     flex-direction: column;
   }
   .left-pane {
+    position: static;
     width: 100%;
+    height: auto;
     border-right: none;
     border-bottom: 1px solid #ccc;
+  }
+  .right-pane {
+    margin-left: 0;
   }
 }
