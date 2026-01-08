@@ -5,10 +5,58 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <h2>Path Planning Visualizer</h2>
 
-  <button id="clearBtn">Clear Obstacles</button>
-  <canvas id="canvas" width="600" height="600"></canvas>
+  <div class="container">
+
+    <!-- LEFT PANE -->
+    <div class="left-pane">
+      <h3>Algorithm</h3>
+
+      <label for="algoSelect">Select Algorithm</label>
+      <select id="algoSelect">
+        <option value="astar">A*</option>
+        <option value="rrt">RRT</option>
+        <option value="rrtstar">RRT*</option>
+      </select>
+
+      <div id="algoParams">
+        <!-- Parameters will be injected dynamically -->
+        <p>Select an algorithm to see parameters.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT PANE -->
+    <div class="right-pane">
+
+      <!-- Instructions -->
+      <div class="instructions">
+        <p>
+          Click and drag to draw obstacles.  
+          Green cell is the start, red cell is the goal.
+        </p>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button id="runBtn">Run</button>
+        <button id="clearBtn">Clear Obstacles</button>
+        <button id="clearPathBtn">Clear Path</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <p><b>Path Length:</b> <span id="pathLength">-</span></p>
+        <p><b>Nodes Visited:</b> <span id="nodesVisited">-</span></p>
+        <p><b>Time Taken:</b> <span id="timeTaken">-</span> ms</p>
+      </div>
+
+      <!-- Canvas -->
+      <canvas id="canvas" width="600" height="600"></canvas>
+
+    </div>
+  </div>
 
   <script src="main.js"></script>
 </body>
