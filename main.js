@@ -15,6 +15,10 @@ let grid = Array(GRID_SIZE)
 let isMouseDown = false;
 let lastCell = null;
 
+// ===== Dragging state =====
+let isDraggingStart = false;
+let isDraggingGoal = false;
+
 // ===== Path state =====
 let currentPath = null;
 
@@ -65,8 +69,8 @@ function drawObstacles() {
   }
 }
 
-let start = { r: 0, c: 0 };
-let goal = { r: 19, c: 19 };
+let start = { r: 3, c: 3 };
+let goal = { r: 16, c: 16 };
 
 function drawStartGoal() {
   ctx.fillStyle = "green";
@@ -153,22 +157,47 @@ function toggleCell(cell) {
 canvas.addEventListener("mousedown", (e) => {
   isMouseDown = true;
   lastCell = null;
-  toggleCell(getCellFromMouse(e));
+  const cell = getCellFromMouse(e);
+  if (cell) {
+    if (cell.r === start.r && cell.c === start.c) {
+      isDraggingStart = true;
+    } else if (cell.r === goal.r && cell.c === goal.c) {
+      isDraggingGoal = true;
+    } else {
+      toggleCell(cell);
+    }
+  }
 });
 
 canvas.addEventListener("mousemove", (e) => {
-  if (!isMouseDown) return;
-  toggleCell(getCellFromMouse(e));
+  if (isDraggingStart || isDraggingGoal) {
+    const cell = getCellFromMouse(e);
+    if (cell) {
+      if (isDraggingStart) {
+        start = { r: cell.r, c: cell.c };
+      } else if (isDraggingGoal) {
+        goal = { r: cell.r, c: cell.c };
+      }
+      currentPath = null; // Clear path when positions change
+      redraw();
+    }
+  } else if (isMouseDown) {
+    toggleCell(getCellFromMouse(e));
+  }
 });
 
 canvas.addEventListener("mouseup", () => {
   isMouseDown = false;
   lastCell = null;
+  isDraggingStart = false;
+  isDraggingGoal = false;
 });
 
 canvas.addEventListener("mouseleave", () => {
   isMouseDown = false;
   lastCell = null;
+  isDraggingStart = false;
+  isDraggingGoal = false;
 });
 
 // ===== Initial draw =====
