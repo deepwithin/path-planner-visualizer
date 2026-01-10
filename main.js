@@ -329,6 +329,7 @@ algoSelect.addEventListener("change", () => {
 import { runAStar } from "./planners/astar.js";
 import { runDijkstra } from "./planners/dijkstra.js";
 import { runRRT } from "./planners/rrt.js";
+import { runRRTStar } from "./planners/rrtstar.js";
 
 document.getElementById("runBtn").addEventListener("click", () => {
   const algo = algoSelect.value;
@@ -370,6 +371,15 @@ document.getElementById("runBtn").addEventListener("click", () => {
 
     result = runRRT(grid, start, goal, { stepSize, maxIterations });
     console.log("RRT result:", result);
+  }
+
+  if (algo === "rrtstar") {
+    const stepSize = parseInt(document.getElementById("stepSizeInput").value);
+    const rewireRadius = parseInt(document.getElementById("rewireRadiusInput").value);
+    console.log("RRT* params:", { stepSize, rewireRadius });
+
+    result = runRRTStar(grid, start, goal, { stepSize, rewireRadius });
+    console.log("RRT* result:", result);
   }
 
   if (!result) {
